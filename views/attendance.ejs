@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Instructor Portal</span>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/instructor-dashboard" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/my-classes" class="menu-item">
+                <i class="fas fa-book"></i>
+                <span>My Classes</span>
+            </a>
+            <a href="/students-list" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Students</span>
+            </a>
+            <a href="/upload-grades" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Upload Grades</span>
+            </a>
+            <a href="/attendance" class="menu-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="/assignments" class="menu-item">
+                <i class="fas fa-tasks"></i>
+                <span>Assignments</span>
+            </a>
+            <a href="/assign-course" class="menu-item">
+                <i class="fas fa-plus-circle"></i>
+                <span>Assign Course</span>
+            </a>
+            <a href="/announcements" class="menu-item">
+                <i class="fas fa-bell"></i>
+                <span>Announcements</span>
+            </a>
+            <a href="/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" class="menu-item logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Attendance Management</h1>
+                <p>Mark and view student attendance</p>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Course Selection -->
+            <div class="form-section">
+                <h3>Select Course</h3>
+                <select id="courseSelect" onchange="loadAttendance()">
+                    <option value="">Choose a course...</option>
+                </select>
+            </div>
+
+            <!-- Attendance Table -->
+            <div id="attendanceSection" style="display: none;">
+                <div class="form-section">
+                    <h3>Mark Attendance</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attendanceDate">Date:</label>
+                            <input type="date" id="attendanceDate" value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                    </div>
+                    <div id="attendanceTable"></div>
+                    <button onclick="saveAttendance()" class="btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-save"></i> Save Attendance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/instructor-dashboard.js"></script>
+    <script>
+        // Load courses on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInstructorCourses();
+        });
+
+        // Load attendance for selected course
+        async function loadAttendance() {
+            const courseSelect = document.getElementById('courseSelect');
+            const offeringId = courseSelect.value;
+
+            if (!offeringId) {
+                document.getElementById('attendanceSection').style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/students/${offeringId}`, { credentials: 'include' });
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayAttendanceTable(data.students);
+                    document.getElementById('attendanceSection').style.display = 'block';
+                } else {
+                    alert(data.error || 'Failed to load students');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('An error occurred');
+            }
+        }
+
+        // Display attendance table
+        function displayAttendanceTable(students) {
+            const tableHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${students.map(student => `
+                            <tr>
+                                <td>${student.name}</td>
+                                <td>${student.email}</td>
+                                <td>
+                                    <select class="attendance-status" data-enrollment-id="${student.enrollmentId}">
+                                        <option value="Present">Present</option>
+                                        <option value="Absent">Absent</option>
+                                        <option value="Late">Late</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('attendanceTable').innerHTML = tableHTML;
+        }
+
+        // Save attendance
+        async function saveAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const offeringId = document.getElementById('courseSelect').value;
+
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+
+            const attendanceData = [];
+            document.querySelectorAll('.attendance-status').forEach(select => {
+                attendanceData.push({
+                    enrollmentId: select.dataset.enrollmentId,
+                    date: date,
+                    status: select.value
+                });
+            });
+
+            try {
+                const response = await fetch('/api/mark-attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ offeringId, attendanceData }),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Attendance saved successfully!');
+                } else {
+                    alert(data.error || 'Failed to save attendance');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('An error occurred');
+            }
+        }
+    </script>
+</body>
+</html>

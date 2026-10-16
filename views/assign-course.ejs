@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Course - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-chalkboard-user"></i><span>Instructor Portal</span></div>
+        <nav class="sidebar-menu">
+            <a href="/instructor-dashboard" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/my-classes" class="menu-item"><i class="fas fa-book"></i><span>My Classes</span></a>
+            <a href="/students-list" class="menu-item"><i class="fas fa-users"></i><span>Students</span></a>
+            <a href="/upload-grades" class="menu-item"><i class="fas fa-chart-bar"></i><span>Grades</span></a>
+            <a href="/attendance" class="menu-item"><i class="fas fa-calendar-check"></i><span>Attendance</span></a>
+            <a href="/assignments" class="menu-item"><i class="fas fa-tasks"></i><span>Assignments</span></a>
+            <a href="/assign-course" class="menu-item active"><i class="fas fa-plus-circle"></i><span>Assign Course</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-file-upload"></i><span>Materials</span></a>
+            <a href="/announcements" class="menu-item"><i class="fas fa-bell"></i><span>Announcements</span></a>
+            <a href="/profile" class="menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            <a href="#" class="menu-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Assign Course</h1>
+            <p>Create a course offering for your classes</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-section" style="max-width: 700px;">
+                <h2><i class="fas fa-plus-circle"></i> New Course Offering</h2>
+                <form id="assignCourseForm">
+                    <div class="form-group">
+                        <label>Select Course</label>
+                        <select id="courseSelect" required>
+                            <option value="">Select a course</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Semester</label>
+                        <select id="semester" required>
+                            <option value="">Select semester</option>
+                            <option value="Spring">Spring</option>
+                            <option value="Fall">Fall</option>
+                            <option value="Summer">Summer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" id="offeringYear" value="2024" min="2024" required>
+                    </div>
+                    <div id="assignCourseMessage" style="margin-bottom: 1rem; display: none;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Assign Course</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script src="/js/instructor-dashboard.js"></script>
+    <script>
+        function logout() { fetch('/auth/logout').then(() => window.location.href = '/'); }
+    </script>
+</body>
+</html>

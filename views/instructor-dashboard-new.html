@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Dashboard - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        .sidebar-menu { list-style: none; }
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .menu-item.active {
+            background: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            background: #f5f5f5;
+        }
+        .header-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-info h2 {
+            margin: 0;
+            color: #333;
+        }
+        .user-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .tab-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+        .tab-button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        .tab-button:hover {
+            background: #f9f9f9;
+        }
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-content {
+            padding: 30px;
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .subject-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .subject-card:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        .subject-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subject-code {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .student-count {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .assignment-form {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .marks-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .marks-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .marks-table tr:hover {
+            background: #f5f5f5;
+        }
+        .input-marks {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .success-msg {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .upload-section {
+            background: #e7f3ff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            background: #28a745;
+            cursor: pointer;
+        }
+        .upload-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-chalkboard-user"></i> Instructor Portal
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="switchTab('overview')">
+                    <i class="fas fa-home"></i> Home
+                </div>
+                <div class="menu-item" onclick="switchTab('upload-assignment')">
+                    <i class="fas fa-file-upload"></i> Upload Assignment
+                </div>
+                <div class="menu-item" onclick="switchTab('upload-marks')">
+                    <i class="fas fa-edit"></i> Upload Marks
+                </div>
+                <div class="menu-item" onclick="switchTab('attendance')">
+                    <i class="fas fa-calendar-check"></i> Mark Attendance
+                </div>
+                <div class="menu-item" onclick="switchTab('timetable')">
+                    <i class="fas fa-calendar"></i> Timetable
+                </div>
+                <div class="menu-item" onclick="logoutUser()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header-section">
+                <div class="user-info">
+                    <i class="fas fa-user-circle" style="font-size: 40px; color: #667eea;"></i>
+                    <div>
+                        <h2 id="teacherName">Dr. Loading...</h2>
+                        <p id="teacherEmail">Instructor</p>
+                        <p>Department: <span id="teacherDept">-</span></p>
+                    </div>
+                </div>
+                <div>
+                    <button class="logout-btn" onclick="logoutUser()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-section">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="switchTab('overview')">Overview</button>
+                    <button class="tab-button" onclick="switchTab('upload-assignment')">Upload Assignment</button>
+                    <button class="tab-button" onclick="switchTab('upload-marks')">Upload Marks</button>
+                    <button class="tab-button" onclick="switchTab('attendance')">Attendance</button>
+                    <button class="tab-button" onclick="switchTab('timetable')">Timetable</button>
+                </div>
+
+                <!-- Tab 1: Overview -->
+                <div id="overview" class="tab-content active">
+                    <h3>My Subjects & Enrolled Students</h3>
+                    <div id="mySubjects"></div>
+                </div>
+
+                <!-- Tab 2: Upload Assignment -->
+                <div id="upload-assignment" class="tab-content">
+                    <h3>Upload Assignment for My Subject</h3>
+                    <div id="assignmentMessage"></div>
+                    <div class="assignment-form">
+                        <div class="form-group">
+                            <label>Select Subject:</label>
+                            <select id="assignmentSubject" onchange="updateAssignmentInfo()">
+                                <option value="">Choose a subject...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assignment Title:</label>
+                            <input type="text" id="assignmentTitle" placeholder="e.g., Assignment 1: Basic Concepts">
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <textarea id="assignmentDescription" placeholder="Enter assignment details and instructions..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Due Date:</label>
+                                <input type="date" id="assignmentDueDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Max Marks:</label>
+                                <input type="number" id="assignmentMaxMarks" placeholder="100" value="100">
+                            </div>
+                        </div>
+                        <div class="upload-section">
+                            <p>📎 Attach Assignment File (Optional)</p>
+                            <input type="file" id="assignmentFile" class="file-input">
+                            <button class="btn btn-secondary" onclick="document.getElementById('assignmentFile').click()">
+                                Choose File
+                            </button>
+                            <p id="fileName" style="margin-top: 10px; font-size: 12px; color: #666;"></p>
+                        </div>
+                        <button class="btn" onclick="uploadAssignment()">
+                            ✓ Upload Assignment to All Students
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Upload Marks -->
+                <div id="upload-marks" class="tab-content">
+                    <h3>Upload Overall Marks for Students</h3>
+                    <div id="marksMessage"></div>
+                    
+                    <div class="assignment-form">
+                        <div class="form-group">
+                            <label>Select Subject:</label>
+                            <select id="marksSubject" onchange="loadStudentsForMarks()">
+                                <option value="">Choose a subject...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="marksTableContainer"></div>
+                </div>
+
+                <!-- Tab 4: Attendance -->
+                <div id="attendance" class="tab-content">
+                    <h3>Mark Attendance</h3>
+                    <div class="assignment-form">
+                        <div class="form-group">
+                            <label>Select Subject:</label>
+                            <select id="attendanceSubject">
+                                <option value="">Choose a subject...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date:</label>
+                            <input type="date" id="attendanceDate" value="">
+                        </div>
+                        <div id="attendanceStudentsList"></div>
+                        <button class="btn" onclick="submitAttendance()">Submit Attendance</button>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Timetable -->
+                <div id="timetable" class="tab-content">
+                    <h3>My Timetable</h3>
+                    <div id="timetableContent"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Load data on page load
+        window.onload = function() {
+            loadTeacherData();
+        };
+
+        function loadTeacherData() {
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            
+            if (!user) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            document.getElementById('teacherName').textContent = 'Dr. ' + user.name;
+            document.getElementById('teacherEmail').textContent = user.email;
+            document.getElementById('teacherDept').textContent = user.department || 'CSE';
+
+            loadMySubjects(user.id);
+            loadTimetableData(user.id);
+        }
+
+        function loadMySubjects(teacherId) {
+            // Demo data - teacher's subjects (Rajesh teaches CS101, CS201, etc.)
+            const subjects = [
+                { id: 1, code: 'CS101', name: 'Engineering Mathematics I', semester: 'Sem 1', students: 60 },
+                { id: 2, code: 'CS201', name: 'Engineering Mathematics II', semester: 'Sem 2', students: 58 },
+                { id: 3, code: 'CS301', name: 'Theory of Computation', semester: 'Sem 3', students: 55 },
+                { id: 4, code: 'CS401', name: 'Design and Analysis of Algorithms', semester: 'Sem 4', students: 52 }
+            ];
+
+            let html = '';
+            subjects.forEach(subject => {
+                html += `
+                    <div class="subject-card">
+                        <div class="subject-title">${subject.name}</div>
+                        <div class="subject-code">${subject.code} | ${subject.semester}</div>
+                        <span class="student-count">👥 ${subject.students} Students Enrolled</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('mySubjects').innerHTML = html;
+
+            // Populate dropdown menus
+            let optionsHtml = '<option value="">Choose a subject...</option>';
+            subjects.forEach(subject => {
+                optionsHtml += `<option value="${subject.id}">${subject.code} - ${subject.name}</option>`;
+            });
+
+            document.getElementById('assignmentSubject').innerHTML = optionsHtml;
+            document.getElementById('marksSubject').innerHTML = optionsHtml;
+            document.getElementById('attendanceSubject').innerHTML = optionsHtml;
+        }
+
+        function loadStudentsForMarks() {
+            const subjectId = document.getElementById('marksSubject').value;
+            if (!subjectId) return;
+
+            // Demo students data
+            const students = [
+                { id: 16, name: 'Student_Y1_Comp_01', email: 'y1comp1@student.edu', assignment: '', midterm: '', final: '' },
+                { id: 17, name: 'Student_Y1_Comp_02', email: 'y1comp2@student.edu', assignment: '', midterm: '', final: '' },
+                { id: 18, name: 'Student_Y1_Comp_03', email: 'y1comp3@student.edu', assignment: '', midterm: '', final: '' },
+                { id: 19, name: 'Student_Y1_Comp_04', email: 'y1comp4@student.edu', assignment: '', midterm: '', final: '' },
+                { id: 20, name: 'Student_Y1_Comp_05', email: 'y1comp5@student.edu', assignment: '', midterm: '', final: '' }
+            ];
+
+            let html = `
+                <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Assignment Marks</th>
+                            <th>Midterm Marks</th>
+                            <th>Final Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            students.forEach((student, index) => {
+                html += `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.email}</td>
+                        <td><input type="number" class="input-marks" id="assignment_${index}" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" class="input-marks" id="midterm_${index}" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" class="input-marks" id="final_${index}" min="0" max="100" placeholder="0"></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            html += `<button class="btn" style="margin-top: 20px;" onclick="submitMarks()">✓ Upload All Marks</button>`;
+
+            document.getElementById('marksTableContainer').innerHTML = html;
+        }
+
+        function uploadAssignment() {
+            const subject = document.getElementById('assignmentSubject').value;
+            const title = document.getElementById('assignmentTitle').value;
+            const description = document.getElementById('assignmentDescription').value;
+            const dueDate = document.getElementById('assignmentDueDate').value;
+            const maxMarks = document.getElementById('assignmentMaxMarks').value;
+
+            if (!subject || !title || !description || !dueDate) {
+                showMessage('assignmentMessage', 'Please fill all required fields', 'error');
+                return;
+            }
+
+            // Show success message
+            showMessage('assignmentMessage', `✓ Assignment "${title}" has been uploaded to all ${60} students in this subject!`, 'success');
+
+            // Clear form
+            document.getElementById('assignmentTitle').value = '';
+            document.getElementById('assignmentDescription').value = '';
+            document.getElementById('assignmentDueDate').value = '';
+            document.getElementById('assignmentMaxMarks').value = '100';
+        }
+
+        function submitMarks() {
+            const subject = document.getElementById('marksSubject').value;
+            if (!subject) {
+                showMessage('marksMessage', 'Please select a subject', 'error');
+                return;
+            }
+
+            showMessage('marksMessage', '✓ Marks have been uploaded successfully! Students will now see their grades.', 'success');
+            document.getElementById('marksTableContainer').innerHTML = '';
+        }
+
+        function submitAttendance() {
+            const subject = document.getElementById('attendanceSubject').value;
+            const date = document.getElementById('attendanceDate').value;
+
+            if (!subject || !date) {
+                alert('Please select both subject and date');
+                return;
+            }
+
+            alert('✓ Attendance for ' + date + ' has been marked for all students!');
+        }
+
+        function loadTimetableData(teacherId) {
+            const timetable = [
+                { day: 'Monday', subject: 'CS101', time: '09:00-10:30', room: 'Room 101' },
+                { day: 'Tuesday', subject: 'CS201', time: '10:45-12:15', room: 'Room 102' },
+                { day: 'Wednesday', subject: 'CS101', time: '09:00-10:30', room: 'Room 101' },
+                { day: 'Thursday', subject: 'CS301', time: '14:00-15:30', room: 'Room 105' },
+                { day: 'Friday', subject: 'CS401', time: '09:00-10:30', room: 'Room 103' }
+            ];
+
+            let html = '';
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            
+            days.forEach(day => {
+                const dayClasses = timetable.filter(t => t.day === day);
+                html += `<div style="margin-bottom: 15px; background: white; border-radius: 8px; overflow: hidden;">`;
+                html += `<div style="background: #667eea; color: white; padding: 12px; font-weight: bold;">${day}</div>`;
+                
+                if (dayClasses.length === 0) {
+                    html += `<div style="padding: 12px; color: #999;">No classes scheduled</div>`;
+                } else {
+                    dayClasses.forEach(cls => {
+                        html += `
+                            <div style="padding: 12px; border-bottom: 1px solid #ddd; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                                <div><strong>${cls.subject}</strong></div>
+                                <div>⏰ ${cls.time}</div>
+                                <div>📍 ${cls.room}</div>
+                            </div>
+                        `;
+                    });
+                }
+                html += `</div>`;
+            });
+            
+            document.getElementById('timetableContent').innerHTML = html;
+        }
+
+        function updateAssignmentInfo() {
+            const subjectId = document.getElementById('assignmentSubject').value;
+            if (subjectId) {
+                document.getElementById('assignmentMessage').innerHTML = '';
+            }
+        }
+
+        function switchTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const messageClass = type === 'error' ? 'error-msg' : 'success-msg';
+            element.innerHTML = `<div class="${messageClass}">${message}</div>`;
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+
+        function logoutUser() {
+            sessionStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+
+        // Set today's date as default
+        document.getElementById('attendanceDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>

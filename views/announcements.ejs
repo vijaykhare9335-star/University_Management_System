@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-graduation-cap"></i><span>Student Portal</span></div>
+        <nav class="sidebar-menu">
+            <a href="/student-dashboard" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/my-courses" class="menu-item"><i class="fas fa-book"></i><span>My Courses</span></a>
+            <a href="/enrollments" class="menu-item"><i class="fas fa-edit"></i><span>Enrollments</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-calendar"></i><span>Timetable</span></a>
+            <a href="/grades" class="menu-item"><i class="fas fa-chart-bar"></i><span>Grades</span></a>
+            <a href="/faculty" class="menu-item"><i class="fas fa-chalkboard-user"></i><span>Faculty</span></a>
+            <a href="/announcements" class="menu-item active"><i class="fas fa-bell"></i><span>Announcements</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-book-open"></i><span>Resources</span></a>
+            <a href="/profile" class="menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            <a href="#" class="menu-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Announcements</h1>
+            <p>Latest updates and important notices</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-section">
+                <div class="announcements-list">
+                    <div class="announcement-item">
+                        <div class="announcement-date">Today</div>
+                        <div class="announcement-content">
+                            <h4>Final Exam Schedule Released</h4>
+                            <p>The final examination schedule for Spring 2024 has been released. Check your email for detailed schedule.</p>
+                        </div>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">1 Day Ago</div>
+                        <div class="announcement-content">
+                            <h4>Mid-Semester Grades Available</h4>
+                            <p>Mid-semester grades have been uploaded. Check the Grades section in your dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">3 Days Ago</div>
+                        <div class="announcement-content">
+                            <h4>Course Registration Deadline</h4>
+                            <p>Last date to register for new courses: April 20, 2024. Late registrations will incur additional fees.</p>
+                        </div>
+                    </div>
+                    <div class="announcement-item">
+                        <div class="announcement-date">1 Week Ago</div>
+                        <div class="announcement-content">
+                            <h4>Internship Drive - Google</h4>
+                            <p>Google is hiring interns for Summer 2024. Registration deadline: April 30. Check placement portal for details.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

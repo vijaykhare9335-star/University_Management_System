@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-chalkboard-user"></i>
+            <span>Teacher Portal</span>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/instructor-dashboard" class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/my-classes" class="menu-item">
+                <i class="fas fa-book"></i>
+                <span>My Classes</span>
+            </a>
+            <a href="/students-list" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Students</span>
+            </a>
+            <a href="/attendance" class="menu-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="/assignments" class="menu-item">
+                <i class="fas fa-tasks"></i>
+                <span>Assignments</span>
+            </a>
+            <a href="/upload-grades" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Grades</span>
+            </a>
+            <a href="/announcements" class="menu-item">
+                <i class="fas fa-bell"></i>
+                <span>Announcements</span>
+            </a>
+            <a href="/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" class="menu-item logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome, Prof. <span id="instructorName"><%= user.userName %></span></h1>
+                <p>Manage your courses and students</p>
+            </div>
+            <div class="header-right">
+                <button class="btn-profile" onclick="openProfile()">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <section class="quick-stats">
+            <div class="stat-box">
+                <i class="fas fa-book"></i>
+                <div>
+                    <h3 id="classCount">0</h3>
+                    <p>Courses Assigned</p>
+                </div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h3 id="studentCount">0</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-pencil"></i>
+                <div>
+                    <h3 id="assignmentCount">0</h3>
+                    <p>Assignments Given</p>
+                </div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-checklist"></i>
+                <div>
+                    <h3 id="enrollmentCount">0</h3>
+                    <p>Total Enrollments</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- My Classes -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-book"></i> My Courses</h2>
+                    <a href="/my-classes" class="btn-link">View All →</a>
+                </div>
+                <div class="courses-grid" id="classesContainer">
+                    <div class="loading">Loading your courses...</div>
+                </div>
+            </section>
+
+            <!-- Recent Students -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Recent Enrollments</h2>
+                    <a href="/students-list" class="btn-link">View All →</a>
+                </div>
+                <div id="recentStudents" style="overflow-x: auto;">
+                    <div class="loading">Loading students...</div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="window.location.href='/upload-grades'">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload Grades</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='/my-classes'">
+                        <i class="fas fa-book"></i>
+                        <span>My Classes</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='/students-list'">
+                        <i class="fas fa-list"></i>
+                        <span>Students List</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='/profile'">
+                        <i class="fas fa-user"></i>
+                        <span>My Profile</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function openProfile() {
+            window.location.href = '/profile';
+        }
+        
+        function logout() {
+            window.location.href = '/auth/logout';
+        }
+
+        // Load Teacher's Courses
+        async function loadTeacherCourses() {
+            try {
+                const response = await fetch('/api/instructor-courses');
+                const data = await response.json();
+                
+                if (data.success && data.courses && data.courses.length > 0) {
+                    document.getElementById('classCount').textContent = data.courses.length;
+                    let studentTotal = 0;
+                    
+                    let html = '';
+                    data.courses.forEach(course => {
+                        studentTotal += course.studentCount || 0;
+                        html += `
+                            <div class="course-card">
+                                <h4>${course.courseName}</h4>
+                                <div class="course-code">${course.courseCode}</div>
+                                <div class="course-info">
+                                    <div><strong>Year:</strong> ${course.year}</div>
+                                    <div><strong>Semester:</strong> ${course.semester}</div>
+                                    <div><strong>Students:</strong> <span style="color: #0dcaf0;">${course.studentCount || 0}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('classesContainer').innerHTML = html;
+                    document.getElementById('studentCount').textContent = studentTotal;
+                } else {
+                    document.getElementById('classesContainer').innerHTML = '<p style="text-align: center; color: #a0a9c9;">No courses assigned</p>';
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+        // Load Recent Students
+        async function loadRecentStudents() {
+            try {
+                const response = await fetch('/api/teacher-enrollments');
+                const data = await response.json();
+                
+                if (data.success && data.enrollments && data.enrollments.length > 0) {
+                    document.getElementById('enrollmentCount').textContent = data.enrollments.length;
+                    
+                    let html = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Course</th>
+                                    <th>Email</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    data.enrollments.slice(0, 10).forEach(enr => {
+                        html += `
+                            <tr>
+                                <td>${enr.studentName}</td>
+                                <td>${enr.courseName}</td>
+                                <td>${enr.studentEmail}</td>
+                                <td>Year ${enr.year}</td>
+                                <td><span style="color: #28a745;">Enrolled</span></td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `</tbody></table>`;
+                    document.getElementById('recentStudents').innerHTML = html;
+                } else {
+                    document.getElementById('recentStudents').innerHTML = '<p style="text-align: center; color: #a0a9c9;">No students enrolled</p>';
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTeacherCourses();
+            loadRecentStudents();
+        });
+    </script>
+</body>
+</html>

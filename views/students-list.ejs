@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students List - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-chalkboard-user"></i><span>Instructor Portal</span></div>
+        <nav class="sidebar-menu">
+            <a href="/instructor-dashboard" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/my-classes" class="menu-item"><i class="fas fa-book"></i><span>My Classes</span></a>
+            <a href="/students-list" class="menu-item active"><i class="fas fa-users"></i><span>Students</span></a>
+            <a href="/upload-grades" class="menu-item"><i class="fas fa-chart-bar"></i><span>Grades</span></a>
+            <a href="/attendance" class="menu-item"><i class="fas fa-calendar-check"></i><span>Attendance</span></a>
+            <a href="/assignments" class="menu-item"><i class="fas fa-tasks"></i><span>Assignments</span></a>
+            <a href="/assign-course" class="menu-item"><i class="fas fa-plus-circle"></i><span>Assign Course</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-file-upload"></i><span>Materials</span></a>
+            <a href="/announcements" class="menu-item"><i class="fas fa-bell"></i><span>Announcements</span></a>
+            <a href="/profile" class="menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            <a href="#" class="menu-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Students List</h1>
+            <p>Manage enrolled students</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-section">
+                <div class="form-group">
+                    <label>Select Course:</label>
+                    <select id="courseSelect" onchange="loadCourseStudents()" style="max-width: 400px;">
+                        <option value="">Select a course</option>
+                    </select>
+                </div>
+            </div>
+            <div class="dashboard-section">
+                <div style="overflow-x: auto;">
+                    <table class="grades-table" id="studentsTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Roll Number</th>
+                                <th>Grade</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsList"></tbody>
+                    </table>
+                    <div id="noStudents" class="loading">Select a course to view students</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/js/instructor-dashboard.js"></script>
+    <script>
+        function logout() { fetch('/auth/logout').then(() => window.location.href = '/'); }
+    </script>
+</body>
+</html>

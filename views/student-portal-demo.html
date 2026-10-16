@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Complete Features Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .subject-card {
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .subject-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .subject-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subject-code {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .teacher-name {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .grade-box {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .grade-label {
+            color: #666;
+            font-size: 10px;
+        }
+
+        .grade-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .letter-grade {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .attendance-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .attendance-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .attendance-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status-present {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .status-absent {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .assignment-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .assignment-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .assignment-due {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .assignment-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-submitted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .marks {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-left: 3px solid #667eea;
+        }
+
+        .marks-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .marks-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .results-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .grade-a { background: #d4edda; color: #155724; }
+        .grade-b { background: #d1ecf1; color: #0c5460; }
+        .grade-c { background: #fff3cd; color: #856404; }
+        .grade-d { background: #f8d7da; color: #721c24; }
+
+        .demo-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .success-msg {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .student-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grades-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to the Student Portal</h1>
+            <p>Comprehensive Academic Management System</p>
+            
+            <div class="student-info">
+                <div class="info-card">
+                    <div class="info-label">Student Email</div>
+                    <div class="info-value">y2comp1</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Year</div>
+                    <div class="info-value">2</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Branch</div>
+                    <div class="info-value">Computer</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Enrolled Courses</div>
+                    <div class="info-value">6</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="section">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('teachers')">📚 My Teachers & Subjects</button>
+                <button class="tab-btn" onclick="switchTab('grades')">📊 Grades by Subject</button>
+                <button class="tab-btn" onclick="switchTab('attendance')">✅ Attendance</button>
+                <button class="tab-btn" onclick="switchTab('assignments')">📝 Assignments</button>
+                <button class="tab-btn" onclick="switchTab('results')">🎓 Results & Certificate</button>
+            </div>
+
+            <!-- Tab 1: Teachers & Subjects -->
+            <div id="teachers" class="tab-content active">
+                <h2 class="section-title">My Teachers & Subjects (Year 2, Semester 3 & 4)</h2>
+                <div class="demo-warning">
+                    <strong>ℹ️ Demo Information:</strong> Each subject is assigned to a specific teacher. Teachers can manage attendance, upload assignments, and grade submissions for their respective subjects.
+                </div>
+
+                <div class="subjects-grid">
+                    <div class="subject-card">
+                        <div class="subject-name">Theory of Computation</div>
+                        <div class="subject-code">CS301</div>
+                        <div class="teacher-name">👨‍🏫 Dr. Rajesh Kumar</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Software Engineering</div>
+                        <div class="subject-code">CS302</div>
+                        <div class="teacher-name">👩‍🏫 Dr. Priya Sharma</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Computer Networks</div>
+                        <div class="subject-code">CS303</div>
+                        <div class="teacher-name">👨‍🏫 Dr. Amit Patel</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Database Management Systems</div>
+                        <div class="subject-code">CS304</div>
+                        <div class="teacher-name">👩‍🏫 Dr. Neha Singh</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Operating Systems</div>
+                        <div class="subject-code">CS305</div>
+                        <div class="teacher-name">👨‍🏫 Dr. Vikram Desai</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Elective I - AI Fundamentals</div>
+                        <div class="subject-code">CS306E</div>
+                        <div class="teacher-name">👩‍🏫 Dr. Anjali Verma</div>
+                        <p style="color: #999; font-size: 12px; margin-top: 10px;">
+                            <strong>Semester:</strong> Sem 3<br>
+                            <strong>Total Enrolled:</strong> 50+ students<br>
+                            <strong>Assigned Assignments:</strong> 2
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Grades by Subject -->
+            <div id="grades" class="tab-content">
+                <h2 class="section-title">My Grades - Subject-wise Breakdown</h2>
+                <div class="success-msg">
+                    <strong>✓ Complete Data:</strong> All subjects show grades from assignments, midterm, and final exams. Teachers have evaluated all submissions.
+                </div>
+
+                <div class="subjects-grid">
+                    <div class="subject-card">
+                        <div class="subject-name">Theory of Computation</div>
+                        <div class="subject-code">CS301 | Dr. Rajesh Kumar</div>
+                        <div class="grades-grid">
+                            <div class="grade-box">
+                                <div class="grade-label">Assignment</div>
+                                <div class="grade-value">78</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Midterm</div>
+                                <div class="grade-value">82</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Final</div>
+                                <div class="grade-value">85</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Overall</div>
+                                <div class="grade-value">82.5</div>
+                            </div>
+                        </div>
+                        <div class="letter-grade">Grade: B</div>
+                        <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                            Assignments Submitted: 2/2 ✓
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Software Engineering</div>
+                        <div class="subject-code">CS302 | Dr. Priya Sharma</div>
+                        <div class="grades-grid">
+                            <div class="grade-box">
+                                <div class="grade-label">Assignment</div>
+                                <div class="grade-value">88</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Midterm</div>
+                                <div class="grade-value">90</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Final</div>
+                                <div class="grade-value">92</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Overall</div>
+                                <div class="grade-value">90.2</div>
+                            </div>
+                        </div>
+                        <div class="letter-grade" style="background: #28a745;">Grade: A</div>
+                        <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                            Assignments Submitted: 2/2 ✓
+                        </p>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-name">Computer Networks</div>
+                        <div class="subject-code">CS303 | Dr. Amit Patel</div>
+                        <div class="grades-grid">
+                            <div class="grade-box">
+                                <div class="grade-label">Assignment</div>
+                                <div class="grade-value">72</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Midterm</div>
+                                <div class="grade-value">75</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Final</div>
+                                <div class="grade-value">78</div>
+                            </div>
+                            <div class="grade-box">
+                                <div class="grade-label">Overall</div>
+                                <div class="grade-value">75.8</div>
+                            </div>
+                        </div>
+                        <div class="letter-grade" style="background: #ffc107; color: #333;">Grade: C</div>
+                        <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                            Assignments Submitted: 2/2 ✓
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Attendance -->
+            <div id="attendance" class="tab-content">
+                <h2 class="section-title">Attendance Records - Marked by Date & Subject</h2>
+                <div class="demo-warning">
+                    <strong>ℹ️ Demo Data:</strong> Teachers mark attendance for each date. Students can see their attendance records organized by subject and date.
+                </div>
+
+                <h3 style="margin-top: 20px; color: #333;">Theory of Computation (CS301)</h3>
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-02-05</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Rajesh Kumar</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-10</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Rajesh Kumar</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-15</td>
+                            <td><span class="status-absent">Absent</span></td>
+                            <td>Dr. Rajesh Kumar</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-20</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Rajesh Kumar</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-25</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Rajesh Kumar</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px; color: #666; font-size: 12px;">
+                    <strong>Summary:</strong> Present: 4 | Absent: 1 | Attendance %: 80%
+                </p>
+
+                <h3 style="margin-top: 30px; color: #333;">Software Engineering (CS302)</h3>
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-02-05</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Priya Sharma</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-10</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Priya Sharma</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-15</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Priya Sharma</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-20</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Priya Sharma</td>
+                        </tr>
+                        <tr>
+                            <td>2024-02-25</td>
+                            <td><span class="status-present">Present</span></td>
+                            <td>Dr. Priya Sharma</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px; color: #666; font-size: 12px;">
+                    <strong>Summary:</strong> Present: 5 | Absent: 0 | Attendance %: 100%
+                </p>
+            </div>
+
+            <!-- Tab 4: Assignments -->
+            <div id="assignments" class="tab-content">
+                <h2 class="section-title">My Assignments - Subject-wise</h2>
+                <div class="success-msg">
+                    <strong>✓ All Assignments Graded:</strong> Students have submitted all assignments and teachers have provided marks and feedback.
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 15px; color: #333;">CS301 - Theory of Computation</h3>
+                <div class="assignment-item">
+                    <div class="assignment-title">Assignment 1: Formal Languages</div>
+                    <div class="assignment-due">Due Date: 2024-02-15</div>
+                    <div class="assignment-status status-submitted">✓ Submitted</div>
+                    <div class="marks">
+                        <div class="marks-label">Marks Obtained:</div>
+                        <div class="marks-value">78/100</div>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">
+                            <strong>Feedback:</strong> Good understanding of concepts. Need to work on complexity analysis.
+                        </p>
+                    </div>
+                    <button class="btn">📥 Download Assignment</button>
+                </div>
+
+                <div class="assignment-item">
+                    <div class="assignment-title">Assignment 2: Turing Machines</div>
+                    <div class="assignment-due">Due Date: 2024-03-15</div>
+                    <div class="assignment-status status-submitted">✓ Submitted</div>
+                    <div class="marks">
+                        <div class="marks-label">Marks Obtained:</div>
+                        <div class="marks-value">82/100</div>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">
+                            <strong>Feedback:</strong> Excellent work! Clear explanations and correct solutions.
+                        </p>
+                    </div>
+                    <button class="btn">📥 Download Assignment</button>
+                </div>
+
+                <h3 style="margin-top: 30px; margin-bottom: 15px; color: #333;">CS302 - Software Engineering</h3>
+                <div class="assignment-item">
+                    <div class="assignment-title">Project 1: Requirements Analysis</div>
+                    <div class="assignment-due">Due Date: 2024-02-20</div>
+                    <div class="assignment-status status-submitted">✓ Submitted</div>
+                    <div class="marks">
+                        <div class="marks-label">Marks Obtained:</div>
+                        <div class="marks-value">88/100</div>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">
+                            <strong>Feedback:</strong> Well-structured document with clear requirements. Good attention to detail.
+                        </p>
+                    </div>
+                    <button class="btn">📥 Download Assignment</button>
+                </div>
+
+                <div class="assignment-item">
+                    <div class="assignment-title">Project 2: Design Patterns Implementation</div>
+                    <div class="assignment-due">Due Date: 2024-03-20</div>
+                    <div class="assignment-status status-submitted">✓ Submitted</div>
+                    <div class="marks">
+                        <div class="marks-label">Marks Obtained:</div>
+                        <div class="marks-value">92/100</div>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">
+                            <strong>Feedback:</strong> Exceptional implementation! Clean code and excellent documentation.
+                        </p>
+                    </div>
+                    <button class="btn">📥 Download Assignment</button>
+                </div>
+            </div>
+
+            <!-- Tab 5: Results & Certificate -->
+            <div id="results" class="tab-content">
+                <h2 class="section-title">Final Results & Certificate</h2>
+                <div class="success-msg">
+                    <strong>✓ Results Published:</strong> All grades have been published. You can download your result marksheet and certificate.
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 15px; color: #333;">Semester 3 - Final Results</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Assignment</th>
+                            <th>Midterm</th>
+                            <th>Final</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CS301</td>
+                            <td>Theory of Computation</td>
+                            <td>78</td>
+                            <td>82</td>
+                            <td>85</td>
+                            <td style="font-weight: bold;">82.5</td>
+                            <td><span class="grade-b" style="padding: 5px 10px; border-radius: 3px;">B</span></td>
+                        </tr>
+                        <tr>
+                            <td>CS302</td>
+                            <td>Software Engineering</td>
+                            <td>88</td>
+                            <td>90</td>
+                            <td>92</td>
+                            <td style="font-weight: bold;">90.2</td>
+                            <td><span class="grade-a" style="padding: 5px 10px; border-radius: 3px;">A</span></td>
+                        </tr>
+                        <tr>
+                            <td>CS303</td>
+                            <td>Computer Networks</td>
+                            <td>72</td>
+                            <td>75</td>
+                            <td>78</td>
+                            <td style="font-weight: bold;">75.8</td>
+                            <td><span class="grade-c" style="padding: 5px 10px; border-radius: 3px;">C</span></td>
+                        </tr>
+                        <tr>
+                            <td>CS304</td>
+                            <td>Database Management Systems</td>
+                            <td>85</td>
+                            <td>87</td>
+                            <td>89</td>
+                            <td style="font-weight: bold;">87.4</td>
+                            <td><span class="grade-a" style="padding: 5px 10px; border-radius: 3px;">A</span></td>
+                        </tr>
+                        <tr>
+                            <td>CS305</td>
+                            <td>Operating Systems</td>
+                            <td>80</td>
+                            <td>82</td>
+                            <td>84</td>
+                            <td style="font-weight: bold;">82.2</td>
+                            <td><span class="grade-b" style="padding: 5px 10px; border-radius: 3px;">B</span></td>
+                        </tr>
+                        <tr>
+                            <td>CS306E</td>
+                            <td>Elective I - AI Fundamentals</td>
+                            <td>90</td>
+                            <td>92</td>
+                            <td>94</td>
+                            <td style="font-weight: bold;">92.4</td>
+                            <td><span class="grade-a" style="padding: 5px 10px; border-radius: 3px;">A</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="background: #d4edda; border: 1px solid #28a745; color: #155724; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                    <strong>✓ PASS STATUS - PROMOTED TO NEXT YEAR</strong><br>
+                    <strong>Faculty ID:</strong> FAC-Y2-COMP-001<br>
+                    <strong>Overall GPA:</strong> 3.7/4.0<br>
+                    <strong>Remarks:</strong> Outstanding performance. Eligible for scholarships and merit-based programs.
+                </div>
+
+                <button class="btn" onclick="downloadCertificate()" style="background: #28a745; margin-top: 20px; font-size: 16px; padding: 12px 30px;">
+                    🎓 Download Certificate
+                </button>
+                <button class="btn" onclick="downloadMarksheet()" style="background: #17a2b8; margin-top: 20px; margin-left: 10px; font-size: 16px; padding: 12px 30px;">
+                    📄 Download Marksheet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function downloadCertificate() {
+            alert('📜 Certificate Downloaded!\n\nFile: Certificate_Student_Y2_Comp_01.html\n\nAPI Endpoint: /api/certificate/[enrollmentId]');
+        }
+
+        function downloadMarksheet() {
+            alert('📋 Marksheet Downloaded!\n\nFile: Marksheet_Y2COMP01_Sem3.pdf\n\nYou can view your detailed results above.');
+        }
+    </script>
+</body>
+</html>

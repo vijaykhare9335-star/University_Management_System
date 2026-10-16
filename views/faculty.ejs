@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Contacts - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-graduation-cap"></i><span>Student Portal</span></div>
+        <nav class="sidebar-menu">
+            <a href="/student-dashboard" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/my-courses" class="menu-item"><i class="fas fa-book"></i><span>My Courses</span></a>
+            <a href="/enrollments" class="menu-item"><i class="fas fa-edit"></i><span>Enrollments</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-calendar"></i><span>Timetable</span></a>
+            <a href="/grades" class="menu-item"><i class="fas fa-chart-bar"></i><span>Grades</span></a>
+            <a href="/faculty" class="menu-item active"><i class="fas fa-chalkboard-user"></i><span>Faculty</span></a>
+            <a href="/announcements" class="menu-item"><i class="fas fa-bell"></i><span>Announcements</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-book-open"></i><span>Resources</span></a>
+            <a href="/profile" class="menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            <a href="#" class="menu-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Faculty Contacts</h1>
+            <p>Get in touch with our faculty members</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-section">
+                <div id="facultyContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div class="loading">Loading faculty...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <style>
+        .contact-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .contact-actions .btn { flex: 1; padding: 0.5rem; }
+    </style>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

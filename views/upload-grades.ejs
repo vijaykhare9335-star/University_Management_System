@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Grades - University ERP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-chalkboard-user"></i><span>Instructor Portal</span></div>
+        <nav class="sidebar-menu">
+            <a href="/instructor-dashboard" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/my-classes" class="menu-item"><i class="fas fa-book"></i><span>My Classes</span></a>
+            <a href="/students-list" class="menu-item"><i class="fas fa-users"></i><span>Students</span></a>
+            <a href="/upload-grades" class="menu-item active"><i class="fas fa-chart-bar"></i><span>Grades</span></a>
+            <a href="/attendance" class="menu-item"><i class="fas fa-calendar-check"></i><span>Attendance</span></a>
+            <a href="/assignments" class="menu-item"><i class="fas fa-tasks"></i><span>Assignments</span></a>
+            <a href="/assign-course" class="menu-item"><i class="fas fa-plus-circle"></i><span>Assign Course</span></a>
+            <a href="#" class="menu-item"><i class="fas fa-file-upload"></i><span>Materials</span></a>
+            <a href="/announcements" class="menu-item"><i class="fas fa-bell"></i><span>Announcements</span></a>
+            <a href="/profile" class="menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            <a href="#" class="menu-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Upload Grades</h1>
+            <p>Enter and upload student grades</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-section">
+                <h2><i class="fas fa-upload"></i> Grade Entry Form</h2>
+                <form id="gradeForm" style="max-width: 600px;">
+                    <div id="gradeError" style="display: none; color: #ff6b6b; margin-bottom: 1rem;"></div>
+                    <div class="form-group" id="course-select-group" style="display: none;">
+                        <label>Select Course:</label>
+                        <select id="courseSelect">
+                            <option value="">Select a course</option>
+                        </select>
+                    </div>
+                    <div id="noCoursesSection" style="display: none; margin-bottom: 1rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.04);">
+                        <p style="margin: 0 0 0.75rem; color: #f8d7da;">You have no assigned courses to upload grades for yet.</p>
+                        <p style="margin: 0 0 1rem; color: var(--text-secondary);">Select a subject below to assign it to your teaching load.</p>
+                        <div class="form-group">
+                            <label>Available Subject:</label>
+                            <select id="availableCourseSelect">
+                                <option value="">Select a subject to assign</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Semester</label>
+                                <select id="assignSemester">
+                                    <option value="Spring">Spring</option>
+                                    <option value="Fall">Fall</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Year</label>
+                                <input type="number" id="assignYear" value="2024" min="2023" max="2030">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="assignCourseFromGrades()" style="width: 100%;">Assign selected subject</button>
+                        <div id="assignCourseMessage" style="margin-top: 0.75rem; display: none; font-size: 0.95rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Student:</label>
+                        <select id="studentSelect" required disabled>
+                            <option value="">Select a course first</option>
+                        </select>
+                    </div>
+                    <div id="studentEnrollWrapper" style="display: none; margin-bottom: 1rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.04);">
+                        <label>Enroll Student into Selected Course:</label>
+                        <select id="availableStudentSelect">
+                            <option value="">Select a student to enroll</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" onclick="enrollStudent()" style="width: 100%; margin-top: 0.75rem;">Enroll Student</button>
+                        <small style="color: var(--text-secondary);">Use this to add students to the selected course before uploading grades.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Assignment Grade (0-100):</label>
+                        <input type="number" id="assignmentGrade" min="0" max="100" placeholder="0-100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Midterm Grade (0-100):</label>
+                        <input type="number" id="midtermGrade" min="0" max="100" placeholder="0-100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Final Grade (0-100):</label>
+                        <input type="number" id="finalGrade" min="0" max="100" placeholder="0-100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Calculated Overall Grade:</label>
+                        <input type="number" id="overallGrade" readonly style="background-color: rgba(255,255,255,0.05);">
+                        <small style="color: var(--text-secondary);">Assignment 10% + Midterm 30% + Final 60%</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Upload Grade</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script>
+        let offeringId = new URLSearchParams(window.location.search).get('offering');
+        const studentSelect = document.getElementById('studentSelect');
+        const courseSelect = document.getElementById('courseSelect');
+        const courseSelectGroup = document.getElementById('course-select-group');
+        const gradeForm = document.getElementById('gradeForm');
+        const gradeError = document.getElementById('gradeError');
+
+        function showError(message) {
+            if (!gradeError) return;
+            gradeError.textContent = message;
+            gradeError.style.display = 'block';
+        }
+
+        function clearError() {
+            if (!gradeError) return;
+            gradeError.textContent = '';
+            gradeError.style.display = 'none';
+        }
+
+        function isValidOfferingId(value) {
+            return value && value !== 'undefined' && value !== 'null';
+        }
+
+        async function loadStudents(selectedOfferingId) {
+            const targetOfferingId = selectedOfferingId && isValidOfferingId(selectedOfferingId)
+                ? selectedOfferingId
+                : isValidOfferingId(offeringId)
+                    ? offeringId
+                    : null;
+
+            if (!targetOfferingId) {
+                studentSelect.innerHTML = '<option value="">Select a course first</option>';
+                studentSelect.disabled = true;
+                document.getElementById('studentEnrollWrapper').style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/students/${targetOfferingId}`, { credentials: 'include' });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load students');
+                }
+
+                if (!data.students || data.students.length === 0) {
+                    studentSelect.innerHTML = '<option value="">No students enrolled for this course</option>';
+                    studentSelect.disabled = true;
+                    showError('This course has no enrolled students yet. You can enroll students below.');
+                } else {
+                    studentSelect.innerHTML = '<option value="">Select a student</option>' + data.students.map(student => `
+                        <option value="${student.enrollmentId}">${student.name} (${student.email})</option>
+                    `).join('');
+                    studentSelect.disabled = false;
+                    clearError();
+                }
+
+                await loadAvailableStudents(targetOfferingId);
+                document.getElementById('studentEnrollWrapper').style.display = 'block';
+            } catch (err) {
+                console.error('Error loading students:', err);
+                showError('Unable to load students for grade upload.');
+                studentSelect.innerHTML = '<option value="">Unable to load students</option>';
+                studentSelect.disabled = true;
+                document.getElementById('studentEnrollWrapper').style.display = 'none';
+            }
+        }
+
+        async function loadAvailableStudents(targetOfferingId) {
+            const availableStudentSelect = document.getElementById('availableStudentSelect');
+
+            try {
+                const response = await fetch(`/api/available-students/${targetOfferingId}`, { credentials: 'include' });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load available students');
+                }
+
+                if (!data.students || data.students.length === 0) {
+                    availableStudentSelect.innerHTML = '<option value="">No students available to enroll</option>';
+                    availableStudentSelect.disabled = true;
+                } else {
+                    availableStudentSelect.innerHTML = '<option value="">Select a student to enroll</option>' + data.students.map(student => `
+                        <option value="${student.userId}">${student.name} (${student.email})</option>
+                    `).join('');
+                    availableStudentSelect.disabled = false;
+                }
+            } catch (err) {
+                console.error('Error loading available students:', err);
+                availableStudentSelect.innerHTML = '<option value="">Unable to load students</option>';
+                availableStudentSelect.disabled = true;
+            }
+        }
+
+        async function enrollStudent() {
+            const selectedOffering = courseSelect.value;
+            const studentId = document.getElementById('availableStudentSelect').value;
+
+            if (!selectedOffering || !studentId) {
+                alert('Select both a course and a student before enrolling.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/instructor-enroll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ offeringId: selectedOffering, studentId })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message || 'Student enrolled successfully');
+                    await loadStudents(selectedOffering);
+                } else {
+                    alert(data.error || 'Failed to enroll student');
+                }
+            } catch (err) {
+                console.error('Enrollment error:', err);
+                alert('An error occurred while enrolling the student.');
+            }
+        }
+
+        async function loadCourses() {
+            try {
+                const response = await fetch('/api/instructor-courses', { credentials: 'include' });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load courses');
+                }
+
+                if (!data.courses || data.courses.length === 0) {
+                    courseSelect.innerHTML = '<option value="">No assigned courses</option>';
+                    courseSelect.disabled = true;
+                    studentSelect.innerHTML = '<option value="">Select a course first</option>';
+                    studentSelect.disabled = true;
+                    showError('You have no courses to upload grades for yet. Assign a course to continue.');
+                    document.getElementById('studentEnrollWrapper').style.display = 'none';
+                    await loadAvailableCoursesForAssignment();
+                    document.getElementById('noCoursesSection').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('noCoursesSection').style.display = 'none';
+                courseSelect.innerHTML = '<option value="">Select a course</option>' + data.courses.map(course => `
+                    <option value="${course.offeringId}">${course.courseName} (${course.courseCode})</option>
+                `).join('');
+                courseSelect.disabled = false;
+                courseSelectGroup.style.display = 'block';
+
+                courseSelect.addEventListener('change', () => {
+                    const selectedOffering = courseSelect.value;
+                    if (selectedOffering) {
+                        loadStudents(selectedOffering);
+                    } else {
+                        studentSelect.innerHTML = '<option value="">Select a course first</option>';
+                        studentSelect.disabled = true;
+                        document.getElementById('studentEnrollWrapper').style.display = 'none';
+                    }
+                });
+            } catch (err) {
+                console.error('Error loading courses:', err);
+                alert('Unable to load instructor courses.');
+                courseSelect.innerHTML = '<option value="">Unable to load courses</option>';
+                courseSelect.disabled = true;
+                studentSelect.innerHTML = '<option value="">Select a course first</option>';
+                studentSelect.disabled = true;
+            }
+        }
+
+        async function loadAvailableCoursesForAssignment() {
+            try {
+                const response = await fetch('/api/available-courses', { credentials: 'include' });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load available courses');
+                }
+
+                const availableCourseSelect = document.getElementById('availableCourseSelect');
+                if (!data.courses || data.courses.length === 0) {
+                    availableCourseSelect.innerHTML = '<option value="">No subjects available</option>';
+                    availableCourseSelect.disabled = true;
+                    return;
+                }
+
+                availableCourseSelect.innerHTML = '<option value="">Select a subject to assign</option>' + data.courses.map(course => `
+                    <option value="${course.courseId}">${course.courseName} (${course.courseCode})</option>
+                `).join('');
+                availableCourseSelect.disabled = false;
+            } catch (err) {
+                console.error('Error loading available courses:', err);
+                const availableCourseSelect = document.getElementById('availableCourseSelect');
+                availableCourseSelect.innerHTML = '<option value="">Unable to load subjects</option>';
+                availableCourseSelect.disabled = true;
+            }
+        }
+
+        async function assignCourseFromGrades() {
+            const courseId = document.getElementById('availableCourseSelect').value;
+            const semester = document.getElementById('assignSemester').value;
+            const year = document.getElementById('assignYear').value;
+
+            if (!courseId) {
+                alert('Please select a subject to assign.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/course-offering', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ courseId, semester, year })
+                });
+                const data = await response.json();
+
+                const assignCourseMessage = document.getElementById('assignCourseMessage');
+                if (response.ok) {
+                    assignCourseMessage.style.display = 'block';
+                    assignCourseMessage.style.color = '#31c576';
+                    assignCourseMessage.textContent = data.message || 'Course assigned successfully.';
+                    await loadCourses();
+                } else {
+                    assignCourseMessage.style.display = 'block';
+                    assignCourseMessage.style.color = '#ff6b6b';
+                    assignCourseMessage.textContent = data.error || 'Failed to assign the course.';
+                }
+            } catch (err) {
+                console.error('Error assigning course:', err);
+                alert('An error occurred while assigning the course.');
+            }
+        }
+
+        function calculateOverallGrade() {
+            const assign = parseFloat(document.getElementById('assignmentGrade').value) || 0;
+            const midterm = parseFloat(document.getElementById('midtermGrade').value) || 0;
+            const final = parseFloat(document.getElementById('finalGrade').value) || 0;
+            const overall = (assign * 0.1) + (midterm * 0.3) + (final * 0.6);
+            document.getElementById('overallGrade').value = overall.toFixed(2);
+        }
+
+        ['assignmentGrade', 'midtermGrade', 'finalGrade'].forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', calculateOverallGrade);
+            }
+        });
+
+        if (gradeForm) {
+            gradeForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const enrollmentId = studentSelect.value;
+                if (!enrollmentId) {
+                    alert('Please select a student before uploading grades.');
+                    return;
+                }
+
+                const assignmentGrade = parseFloat(document.getElementById('assignmentGrade').value) || 0;
+                const midtermGrade = parseFloat(document.getElementById('midtermGrade').value) || 0;
+                const finalGrade = parseFloat(document.getElementById('finalGrade').value) || 0;
+
+                try {
+                    const response = await fetch('/api/upload-grade', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            enrollmentId,
+                            assignmentGrade,
+                            midtermGrade,
+                            finalGrade
+                        }),
+                        credentials: 'include'
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message || 'Grade uploaded successfully!');
+                        gradeForm.reset();
+                        document.getElementById('overallGrade').value = '';
+                    } else {
+                        alert(data.error || 'Grade upload failed.');
+                    }
+                } catch (err) {
+                    console.error('Grade upload error:', err);
+                    alert('An error occurred while uploading the grade.');
+                }
+            });
+        }
+
+        function logout() { fetch('/auth/logout').then(() => window.location.href = '/'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isValidOfferingId(offeringId)) {
+                loadStudents();
+            } else {
+                offeringId = null;
+                loadCourses();
+            }
+        });
+    </script>
+</body>
+</html>
